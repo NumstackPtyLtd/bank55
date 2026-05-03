@@ -1,0 +1,6 @@
+export { customersApi } from './customers'
+export { walletsApi } from './wallets'
+export { loansApi } from './loans'
+export { insuranceApi } from './insurance'
+export { platformApi } from './platform'
+export { notificationsApi } from './notifications'

@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { Hero } from '../components/hero/Hero'
+import { ServiceGrid } from '../components/services/ServiceGrid'
+import { AuthShowcase } from '../components/auth/AuthShowcase'
+import { GettingStarted } from '../components/getting-started/GettingStarted'
+import { Footer } from '../components/footer/Footer'
+import { getServiceCatalog } from '../../application/services/ServiceCatalog'
+import { getCredentialCatalog } from '../../application/services/CredentialCatalog'
+
+const services = getServiceCatalog()
+const credentials = getCredentialCatalog()
+---
+
+<BaseLayout title="Bank55 - MCP Testing Bank">
+  <main>
+    <Hero client:load />
+    <ServiceGrid services={services} client:visible />
+    <AuthShowcase services={services} credentials={credentials} client:visible />
+    <GettingStarted client:visible />
+    <Footer />
+  </main>
+</BaseLayout>

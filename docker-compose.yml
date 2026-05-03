@@ -1,0 +1,136 @@
+services:
+  customers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: customers
+    ports:
+      - "5501:5501"
+    environment:
+      PORT: "5501"
+      DB_PATH: /data/customers.db
+    volumes:
+      - customers_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5501/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  wallets:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: wallets
+    ports:
+      - "5502:5502"
+    environment:
+      PORT: "5502"
+      DB_PATH: /data/wallets.db
+      JWT_SECRET: wallets-jwt-secret-2024
+    volumes:
+      - wallets_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5502/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  loans:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: loans
+    ports:
+      - "5503:5503"
+    environment:
+      PORT: "5503"
+      DB_PATH: /data/loans.db
+    volumes:
+      - loans_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5503/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  insurance:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: insurance
+    ports:
+      - "5504:5504"
+    environment:
+      PORT: "5504"
+      DB_PATH: /data/insurance.db
+    volumes:
+      - insurance_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5504/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: platform
+    ports:
+      - "5500:5500"
+    environment:
+      PORT: "5500"
+      DB_PATH: /data/platform.db
+    volumes:
+      - platform_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5500/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  notifications:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: notifications
+    ports:
+      - "5505:5505"
+    environment:
+      PORT: "5505"
+      DB_PATH: /data/notifications.db
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+    depends_on:
+      - mailpit
+    volumes:
+      - notifications_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:5505/health').then(r=>process.exit(r.ok?0:1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "5580:8025"
+      - "5525:1025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  customers_data:
+  wallets_data:
+  loans_data:
+  insurance_data:
+  platform_data:
+  notifications_data:

@@ -1,0 +1,20 @@
+{
+  "name": "@bank55/wallets",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "start": "node --import tsx src/index.ts"
+  },
+  "dependencies": {
+    "@bank55/shared": "workspace:*",
+    "@hono/node-server": "^1.14.1",
+    "hono": "^4.12.14",
+    "better-sqlite3": "^11.7.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "tsx": "^4.0.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "bank55",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:customers": "pnpm --filter @bank55/customers dev",
+    "dev:wallets": "pnpm --filter @bank55/wallets dev",
+    "dev:loans": "pnpm --filter @bank55/loans dev",
+    "dev:insurance": "pnpm --filter @bank55/insurance dev",
+    "dev:platform": "pnpm --filter @bank55/platform dev",
+    "dev:notifications": "pnpm --filter @bank55/notifications dev",
+    "dev:web": "pnpm --filter @bank55/web dev",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.8.0"
+  }
+}

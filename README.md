@@ -83,7 +83,7 @@ docker compose up --build -d
 
 Each service uses a different auth mechanism:
 
-### Customers (:5501) — API Key
+### Customers (:5501), API Key
 
 ```bash
 curl -X POST http://localhost:5501/mcp \
@@ -92,7 +92,7 @@ curl -X POST http://localhost:5501/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-### Wallets (:5502) — JWT Bearer
+### Wallets (:5502), JWT Bearer
 
 ```bash
 # Get token
@@ -107,7 +107,7 @@ curl -X POST http://localhost:5502/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-### Loans (:5503) — OAuth2 Client Credentials
+### Loans (:5503), OAuth2 Client Credentials
 
 ```bash
 # Get token
@@ -121,7 +121,7 @@ curl -X POST http://localhost:5503/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-### Insurance (:5504) — HMAC Signature
+### Insurance (:5504), HMAC Signature
 
 ```bash
 # Generate signature (helper endpoint)
@@ -138,7 +138,7 @@ curl -X POST http://localhost:5504/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-### Platform (:5500) — Session Token
+### Platform (:5500), Session Token
 
 ```bash
 # Login
@@ -153,7 +153,7 @@ curl -X POST http://localhost:5500/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-### Notifications (:5505) — Service Token
+### Notifications (:5505), Service Token
 
 ```bash
 curl -X POST http://localhost:5505/mcp \
@@ -231,11 +231,11 @@ bank55/
 
 ## Use Cases
 
-- **MCP client testing** — Connect any MCP client to one or more services
-- **Multi-auth testing** — Each service uses a different auth mechanism
-- **AI agent orchestration** — Cross-service workflows (transfer + notify, loan payment + receipt)
-- **Scenario simulation** — Dashboard has one-click scenarios for common banking operations
-- **Action auditing** — All dashboard actions are logged and queryable via MCP tools
+- **MCP client testing**: connect any MCP client to one or more services
+- **Multi-auth testing**: each service uses a different auth mechanism
+- **AI agent orchestration**: cross-service workflows (transfer + notify, loan payment + receipt)
+- **Scenario simulation**: dashboard has one-click scenarios for common banking operations
+- **Action auditing**: all dashboard actions are logged and queryable via MCP tools
 
 ## Tech Stack
 

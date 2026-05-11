@@ -94,7 +94,7 @@ export function WalletsPanel() {
     <div className="p-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Wallets</h2>
-        <p className="text-gray-500 text-sm mt-0.5">Service :5502 — JWT Bearer Auth (account + PIN)</p>
+        <p className="text-gray-500 text-sm mt-0.5">Service :5502, JWT Bearer Auth (account + PIN)</p>
       </div>
 
       <div className="mb-6 max-w-md">
@@ -127,7 +127,7 @@ export function WalletsPanel() {
           icon="◉"
           title="No customer selected"
           description="Search and select a customer above to view their wallets, transactions, and make transfers."
-          hint="Tip: Try Elvis Magagula — he has cheque, savings, and credit accounts"
+          hint="Tip: Try Elvis Magagula. He has cheque, savings, and credit accounts"
           color="violet"
         />
       ) : noAccess ? (

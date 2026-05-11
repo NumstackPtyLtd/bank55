@@ -56,7 +56,7 @@ export function ServiceGridPanel({ onNavigate }: Props) {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900">Service Overview</h2>
         <p className="text-gray-500 text-sm mt-1">
-          {online}/{services.length} services online — {totalTools} MCP tools available
+          {online}/{services.length} services online, {totalTools} MCP tools available
         </p>
       </div>
 

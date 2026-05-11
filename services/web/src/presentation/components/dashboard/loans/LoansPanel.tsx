@@ -53,7 +53,7 @@ export function LoansPanel() {
     <div className="p-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Loans</h2>
-        <p className="text-gray-500 text-sm mt-0.5">Service :5503 — OAuth2 Client Credentials</p>
+        <p className="text-gray-500 text-sm mt-0.5">Service :5503, OAuth2 Client Credentials</p>
       </div>
 
       <div className="mb-6 max-w-md">
@@ -75,7 +75,7 @@ export function LoansPanel() {
           icon="◆"
           title="No customer selected"
           description="Search and select a customer above to view their loans, payment history, and amortization details."
-          hint="Tip: Try Elvis Magagula — he has a vehicle loan and a paid-off student loan"
+          hint="Tip: Try Elvis Magagula. He has a vehicle loan and a paid-off student loan"
           color="amber"
         />
       ) : (

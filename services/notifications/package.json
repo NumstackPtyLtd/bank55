@@ -10,7 +10,7 @@
     "@bank55/shared": "workspace:*",
     "@hono/node-server": "^1.14.1",
     "hono": "^4.12.14",
-    "better-sqlite3": "^11.7.0",
+    "better-sqlite3": "^12.9.0",
     "nodemailer": "^6.9.0"
   },
   "devDependencies": {

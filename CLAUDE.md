@@ -1,131 +1,118 @@
-# Bank55
+# CLAUDE.md
 
-Bank55 is a mock banking platform built for testing MCP (Model Context Protocol) integrations with SupaProxy. It simulates a realistic multi-service banking environment with customers, wallets, loans, insurance, notifications, and a platform orchestrator. Each service exposes MCP tool endpoints, making it ideal for testing SupaProxy connections, consumers, and the agent loop.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-See the [central hub](https://github.com/NumstackPtyLtd/supaproxy) for cross-repo governance, workflow, and conventions.
+## What this is
 
-## Project structure
+Bank55 is a fictional bank built as a **monorepo of six Hono microservices**, each exposing MCP (Model Context Protocol) tools over HTTP. It exists to test AI agents, MCP clients, and multi-auth orchestration. 66 MCP tools across 6 services, 6 different authentication mechanisms, 200+ seeded customers across 6 countries.
 
-```
-bank55/
-  packages/
-    shared/                   Shared utilities
-      src/
-        mcp.ts                MCP JSON-RPC router (createMcpRouter)
-        db.ts                 SQLite database factory (better-sqlite3)
-        index.ts              Package exports
-  services/
-    customers/                Customer management MCP server (port 5501)
-    wallets/                  Wallet and transaction MCP server (port 5502)
-    loans/                    Loan management MCP server (port 5503)
-    insurance/                Insurance policy MCP server (port 5504)
-    platform/                 Platform orchestrator MCP server (port 5500)
-    notifications/            Notification and email MCP server (port 5505)
-    web/                      Astro dashboard with DDD structure
-      src/
-        domain/               Models (Service, Credential), value objects (Tool, AuthMethod, Port)
-        application/          Service and credential catalogues
-        infrastructure/       API clients for each service
-        presentation/         UI components
-  docker-compose.yml          Full stack orchestration (all services + Mailpit)
-  Dockerfile                  Multi-service Docker build
-  pnpm-workspace.yaml         pnpm workspace (packages/*, services/*)
-```
-
-## Stack
-
-| Layer | Tech |
-|---|---|
-| MCP services | Hono + TypeScript |
-| Database | SQLite (better-sqlite3, WAL mode) |
-| Dashboard | Astro + React |
-| Auth | API key (X-API-Key header) |
-| Email | Mailpit (dev SMTP on port 5525, UI on port 5580) |
-| Monorepo | pnpm workspace |
-
-## Services
-
-| Service | Port | Package | Purpose |
-|---|---|---|---|
-| Platform | 5500 | @bank55/platform | Orchestrator and cross-service operations |
-| Customers | 5501 | @bank55/customers | Customer profiles, KYC, risk assessment |
-| Wallets | 5502 | @bank55/wallets | Accounts, transactions, balances |
-| Loans | 5503 | @bank55/loans | Loan applications, approvals, repayments |
-| Insurance | 5504 | @bank55/insurance | Policy management, claims |
-| Notifications | 5505 | @bank55/notifications | Email and notification delivery |
-
-## Development
+## Commands
 
 ```bash
-pnpm install
-
-# Run all services in parallel
-pnpm dev
-
-# Run individual services
-pnpm dev:customers
-pnpm dev:wallets
-pnpm dev:loans
-pnpm dev:insurance
-pnpm dev:platform
-pnpm dev:notifications
-pnpm dev:web
+pnpm install          # Install all workspace dependencies
+pnpm dev              # Start all backend services in parallel
+pnpm dev:web          # Start the Astro web dashboard (:5555) separately
+pnpm docker:up        # Start everything via Docker Compose (includes Mailpit)
+pnpm docker:down
+pnpm docker:logs
 ```
 
-### Docker
-
+Individual services (from within any service directory or root):
 ```bash
-docker compose up --build -d    # Start all services
-docker compose down             # Stop all services
-docker compose logs -f          # Follow logs
+pnpm dev:customers    # :5501
+pnpm dev:wallets      # :5502
+pnpm dev:loans        # :5503
+pnpm dev:insurance    # :5504
+pnpm dev:platform     # :5500 (gateway)
+pnpm dev:notifications # :5505
 ```
 
-## MCP protocol
+There are no tests. There is no lint script at the root — TypeScript compilation (`tsc --noEmit`) is the type check.
 
-Each service implements the MCP JSON-RPC protocol via the shared `createMcpRouter`. The MCP endpoint is `POST /mcp` on each service. Authentication uses the `X-API-Key` header.
-
-### Connecting to SupaProxy
-
-Point a SupaProxy HTTP connection at any service's `/mcp` endpoint with the appropriate API key in the headers.
-
-## Git workflow
-
-All changes go through pull requests. NEVER push directly to main.
-
-### Branch naming
+## Architecture
 
 ```
-feat/short-description
-fix/short-description
-chore/short-description
-docs/short-description
+Platform Gateway  :5500  Session Token auth     13 MCP tools
+Customers         :5501  API Key auth           10 MCP tools
+Wallets           :5502  JWT Bearer auth        10 MCP tools
+Loans             :5503  OAuth2 client creds    12 MCP tools
+Insurance         :5504  HMAC Signature auth    12 MCP tools
+Notifications     :5505  Service Token auth      9 MCP tools
+Web dashboard     :5555  Astro + React
+Mailpit (email)   :5580  UI / :5525 SMTP
 ```
 
-### Destructive commands
+Each backend service is a standalone Hono app with:
+- Its own SQLite database (`better-sqlite3`)
+- An MCP endpoint at `POST /mcp` (JSON-RPC 2.0)
+- A health endpoint at `GET /health`
+- Auth middleware specific to that service
 
-NEVER run these commands:
-- `git push --force`
-- `git reset --hard`
-- `git clean -f`
-- `rm -rf` on project directories
+## Adding a new tool
 
-If something needs to be undone, create a revert commit on a branch.
+Every tool lives in `services/{name}/src/tools.ts`. The pattern is consistent across all services:
 
-## Code rules
+```typescript
+// 1. Add to the tools array
+export const tools: McpTool[] = [
+  {
+    name: 'do_thing',
+    description: 'What it does and when to call it',
+    inputSchema: {
+      type: 'object',
+      properties: { id: { type: 'string', description: '...' } },
+      required: ['id'],
+    },
+  },
+]
 
-### Type safety
+// 2. Add a case in handleTool
+export async function handleTool(name: string, args: Record<string, unknown>, ctx: ToolContext): Promise<ToolResult> {
+  switch (name) {
+    case 'do_thing': {
+      const row = ctx.db.prepare('SELECT ...').get(args.id as string)
+      if (!row) return { content: [{ type: 'text', text: 'Not found' }], isError: true }
+      return { content: [{ type: 'text', text: JSON.stringify(row) }] }
+    }
+  }
+}
+```
 
-- No `any` types. Define interfaces for all data structures.
-- No `as any` casts.
+`ToolContext` is `{ db: Database, credentials: Record<string, string> }`. The shared MCP router in `packages/shared/src/mcp.ts` handles `initialize`, `tools/list`, and `tools/call` — you only write the tool definitions and handler.
 
-### No hardcoded values
+## Database pattern
 
-- No env var fallbacks. Use `requireEnv()` with no defaults.
-- No hardcoded API URLs, secrets, or magic numbers.
+Each service has `src/schema.ts` with two exports:
+- `initSchema(db)` — creates tables, called on startup
+- `seed(db)` — populates demo data, called once on first run (guarded by a row count check)
 
-### Writing standards
+SQLite databases default to `/data/{service}.db` in Docker and an in-memory/local path in dev. WAL mode and foreign keys are enabled on every connection via `packages/shared/src/db.ts`.
 
-- British English throughout (colour, organisation, behaviour).
-- No em dashes or en dashes. Use commas, full stops, or semicolons.
-- No smart quotes. Use straight quotes only.
-- Sentence case for headings.
+ID format: `{prefix}-{uuid.slice(0,6..8)}` — e.g. `cust-a1b2c3`, `txn-d4e5f6`.
+
+## Authentication per service
+
+| Service | Mechanism | How to get credentials |
+|---|---|---|
+| Customers | `X-API-Key` header | Seeded API keys in schema.ts |
+| Wallets | `Authorization: Bearer {jwt}` | `POST /auth/token` with account_number + PIN |
+| Loans | `Authorization: Bearer {token}` | `POST /oauth/token` with client_id + client_secret |
+| Insurance | `X-Client-Id` + `X-Timestamp` + `X-Signature` (HMAC-SHA256) | Seeded client credentials |
+| Platform | `X-Session-Token` header | `POST /auth/login` with email + password |
+| Notifications | `X-Service-Token` header | Seeded service token (for inter-service calls only) |
+
+Credentials for all services are catalogued in `services/web/src/application/CredentialCatalog.ts`.
+
+## Cross-service communication
+
+Services don't call each other's MCP endpoints. When a service needs data from another it uses a direct REST API (e.g. Customers exposes `/api/customers/:id` for internal calls). The Notifications service is called by other services using its service token.
+
+## Web dashboard
+
+`services/web/` follows domain-driven design:
+- `src/domain/` — value objects: `AuthMethod`, `Tool`, `Port`, `Service`, `Credential`
+- `src/application/` — `ServiceCatalog` and `CredentialCatalog` (single source of truth for service metadata)
+- `src/infrastructure/api/` — one HTTP client per backend service
+- `src/presentation/` — Astro pages + React islands
+
+When adding a new service or changing ports/auth, update `ServiceCatalog` and `CredentialCatalog` — the UI derives everything from them.

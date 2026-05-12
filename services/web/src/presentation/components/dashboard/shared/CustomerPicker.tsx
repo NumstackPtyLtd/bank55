@@ -97,7 +97,7 @@ export function CustomerPicker({ selected, onSelect, color = 'emerald' }: Props)
           </div>
           {customers.length > 20 && !search && (
             <div className="px-3 py-2 text-xs text-gray-400 border-t border-gray-100 bg-gray-50">
-              Showing 20 of {customers.length} — type to search
+              Showing 20 of {customers.length}, type to search
             </div>
           )}
         </div>

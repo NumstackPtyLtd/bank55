@@ -75,7 +75,7 @@ export function CustomersPanel() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Customers</h2>
           <p className="text-gray-500 text-sm mt-0.5">
-            {filtered.length} of {customers.length} customers — Service :5501 (API Key)
+            {filtered.length} of {customers.length} customers, Service :5501 (API Key)
           </p>
         </div>
         <button onClick={loadCustomers} className="px-3 py-1.5 text-xs bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 shadow-sm">
@@ -233,7 +233,7 @@ function Field({ label, value }: { label: string; value: any }) {
   return (
     <div>
       <span className="text-xs text-gray-400 block">{label}</span>
-      <span className="text-gray-800 text-sm">{value || '—'}</span>
+      <span className="text-gray-800 text-sm">{value || '-'}</span>
     </div>
   )
 }

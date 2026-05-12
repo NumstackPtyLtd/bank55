@@ -58,7 +58,7 @@ export function InsurancePanel() {
     <div className="p-8">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Insurance</h2>
-        <p className="text-gray-500 text-sm mt-0.5">Service :5504 — HMAC Signature Auth</p>
+        <p className="text-gray-500 text-sm mt-0.5">Service :5504, HMAC Signature Auth</p>
       </div>
 
       <div className="mb-6 max-w-md">
@@ -80,7 +80,7 @@ export function InsurancePanel() {
           icon="◇"
           title="No customer selected"
           description="Search and select a customer above to view their insurance policies, claims, and premium details."
-          hint="Tip: Try Elvis Magagula — he has vehicle, life, and home insurance"
+          hint="Tip: Try Elvis Magagula. He has vehicle, life, and home insurance"
           color="rose"
         />
       ) : (
@@ -125,7 +125,7 @@ export function InsurancePanel() {
                 <div className="pt-3 border-t border-gray-100">
                   <h5 className="text-xs font-semibold text-gray-500 mb-1">Beneficiaries</h5>
                   {selectedPolicy.beneficiaries.map((b: any) => (
-                    <div key={b.id} className="text-xs text-gray-600">{b.name} ({b.relationship}) — {b.percentage}%</div>
+                    <div key={b.id} className="text-xs text-gray-600">{b.name} ({b.relationship}), {b.percentage}%</div>
                   ))}
                 </div>
               )}
@@ -171,7 +171,7 @@ export function InsurancePanel() {
 }
 
 function Field({ label, value }: { label: string; value: string }) {
-  return <div><span className="text-xs text-gray-400 block">{label}</span><span className="text-gray-800 text-sm">{value || '—'}</span></div>
+  return <div><span className="text-xs text-gray-400 block">{label}</span><span className="text-gray-800 text-sm">{value || '-'}</span></div>
 }
 function PolicyStatus({ status }: { status: string }) {
   const s: Record<string, string> = { active: 'bg-emerald-50 text-emerald-700', lapsed: 'bg-red-50 text-red-700', cancelled: 'bg-gray-100 text-gray-600' }

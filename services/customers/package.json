@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "start": "node --import tsx src/index.ts"
+    "dev": "mkdir -p ../../.data && node --env-file=.env --import tsx src/index.ts",
+    "start": "node --env-file=.env --import tsx src/index.ts"
   },
   "dependencies": {
     "@bank55/shared": "workspace:*",
